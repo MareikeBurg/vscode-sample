@@ -1,5 +1,6 @@
 import pygame
 import os
+from field import Field
 
 
 class Game:
@@ -20,6 +21,7 @@ class Game:
             os.path.join("assets/sprites", "pinkbackground.png")
         )
         self.clicks = []
+        self.feld = Field(self.win)
 
     def run(self):
         run = True
@@ -44,7 +46,9 @@ class Game:
     def draw(self):
         self.win.blit(self.background, (0, 0))
         for p in self.clicks:
-            pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
+            # pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
+            self.feld.draw(p[0], p[1])
+        pygame.display.flip()
         pygame.display.update()
 
 
