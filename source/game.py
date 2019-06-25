@@ -5,8 +5,12 @@ from field import Field
 
 class Game:
     def __init__(self):
-        self.width = 1920
-        self.height = 1080
+        if 1 == 2:
+            self.width = 400
+            self.height = 400
+        elif 1 == 1:
+            self.width = 1920
+            self.height = 1080
         self.win = pygame.display.set_mode((self.width, self.height))
         self.enemys = []
         self.neutrals = []
@@ -45,12 +49,11 @@ class Game:
 
     def draw(self):
         self.win.blit(self.background, (0, 0))
-        for p in self.clicks:
-            # pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
-            self.feld.draw(p[0], p[1])
-        pygame.display.flip()
+        # for p in self.clicks:
+        # pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
+
+        # pygame.display.flip()
+        self.feld.draw(300, 300, "grass")
+        self.feld.draw(300, 300 + 4 * 32, "forest")
         pygame.display.update()
 
-
-g = Game()
-g.run()
