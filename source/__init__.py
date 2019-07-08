@@ -1,5 +1,8 @@
+import logging
 from game import Game
 
-print("a")
+# logging options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
+
 g = Game()
 g.run()

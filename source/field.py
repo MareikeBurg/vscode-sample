@@ -3,12 +3,14 @@ from generator import Generator
 
 
 class Field:
-    def __init__(self, screen):
+    def __init__(self, screen, scale):
         self.tiles = [["xxa"], ["xxa"], ["aax"]]
-        self.tile_list = create_tile_list()
+        self.tile_list = create_tile_list(scale)
         self.screen = screen
         self.gen = Generator()
-        self.layout = self.gen.custom(16, 16, [1, 2, 3, 4])
+        self.layout = self.gen.custom(16, 9, [1, 2, 3, 4])
+        self.x, self.y = 16, 9
+        self.scale = scale
 
     def draw(self, x: int, y: int, tiletype):
 
@@ -24,10 +26,20 @@ class Field:
             self.screen.blit(self.tile_list[6], (x, y))
         """
 
+    # TODO sprites sind nicht hexagonal, oben fehlen zwei reihen pixel, sieht unschön aus
     def drawall(self):
-        for i in range(16):
-            for j in range(16):
-                self.draw(100 + i * 24, 100 + j * 32 + (i % 2) * 16, self.layout[i][j])
+        for i in range(self.x):
+            for j in range(self.y):
+                # x and y position, 3/4 tilesize is offset in both direction, y is set down 1/2 tilesize at each second row
+
+                self.draw(
+                    16 * 5 + i * 24 * self.scale,
+                    9 * 5
+                    + j * 32 * self.scale
+                    + (i % 2) * 16 * self.scale
+                    - 1 * j * self.scale,
+                    self.layout[i][j],
+                )
 
 
 # hardcoded
@@ -39,11 +51,10 @@ returns a list of all sprites
 """
 
 
-def create_tile_list():
+def create_tile_list(scale):
     tilesize = (48, 32)
     spritesize = (288, 256)
     spritelocation = "assets/sprites/fantasyhextiles_v3.png"
-    scale = 1
 
     image = pygame.image.load(spritelocation).convert_alpha()
     tile_table = []
@@ -55,6 +66,5 @@ def create_tile_list():
                 image.subsurface(rect), (tilesize[1] * scale, tilesize[0] * scale)
             )
             tile_table.append(tile)
-
     return tile_table
 

@@ -50,5 +50,12 @@ class Generator:
             # rand = random.randint(0, 10)
             layout[random.randint(0, width - 1)][random.randint(0, height - 1)] = 6
 
+        for i in range(5):
+            # rand = random.randint(0, 10)
+            layout[random.randint(0, width - 1)][random.randint(0, height - 1)] = 2
+
+        for i in range(5):
+            # rand = random.randint(0, 10)
+            layout[random.randint(0, width - 1)][random.randint(0, height - 1)] = 1
         return layout
 

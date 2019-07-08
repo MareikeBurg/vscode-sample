@@ -1,17 +1,33 @@
 import pygame
-import os
 from field import Field
+import os
+import logging
 
 
 class Game:
+    """
+    main gameloop class
+    """
+
     def __init__(self):
-        if 1 == 1:
-            self.width: int = 800
-            self.height: int = 800
-        elif 1 == 2:
-            self.width = 1920
-            self.height = 1080
-        self.win = pygame.display.set_mode((self.width, self.height))
+        """
+        setup pygame and prepering a new game
+        """
+        pygame.init()
+
+        try:
+            # hardcoded values for diffrent monitor resolutions
+            self.width, self.height, self.scale = (
+                {1920: 1280, 2560: 1920}[pygame.display.Info().current_w],
+                {975: 720, 1335: 1080}[pygame.display.Info().current_h],
+                {1920: 2, 2560: 3}[pygame.display.Info().current_w],
+            )
+        except KeyError:
+            # else takes default values
+            self.width, self.height, self.scale = 1280, 720, 2
+            logging.warning("using default screen resolution")
+
+        self.window = pygame.display.set_mode((self.width, self.height))
         self.enemys = []
         self.neutrals = []
         self.units = []
@@ -25,7 +41,7 @@ class Game:
             os.path.join("assets/sprites", "pinkbackground.png")
         )
         self.clicks = []
-        self.feld = Field(self.win)
+        self.feld = Field(self.window, self.scale)
 
     def run(self):
         run = True
@@ -47,8 +63,16 @@ class Game:
 
         pygame.quit()
 
+    def clicked(self, pos):
+        """
+        activated on clicking inside the game, triggers actions depending on clicked location
+        
+        Arguments:
+            pos {(int,int)} -- position in which the click occured
+        """
+
     def draw(self):
-        self.win.blit(self.background, (0, 0))
+        # self.win.blit(self.background, (0, 0))
         # for p in self.clicks:
         # pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
 
