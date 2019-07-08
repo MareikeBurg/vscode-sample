@@ -31,7 +31,7 @@ class Field:
         for i in range(self.x):
             for j in range(self.y):
                 # x and y position, 3/4 tilesize is offset in both direction, y is set down 1/2 tilesize at each second row
-
+                # if(self.layout[i][j])
                 self.draw(
                     16 * 5 + i * 24 * self.scale,
                     9 * 5
@@ -59,7 +59,7 @@ def create_tile_list(scale):
     image = pygame.image.load(spritelocation).convert_alpha()
     tile_table = []
     # problem with last row, because only one sprit skip for now
-    for x in range(0, int(spritesize[0] / tilesize[0]) - 1):
+    for x in range(0, int(spritesize[0] / tilesize[0])):
         for y in range(0, int(spritesize[1] / tilesize[1])):
             rect = (y * tilesize[1], x * tilesize[0], tilesize[1], tilesize[0])
             tile = pygame.transform.scale(

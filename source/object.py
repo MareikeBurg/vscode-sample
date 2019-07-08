@@ -1,21 +1,23 @@
 import pygame
 
-class Enemy:
-imgs = []
 
-    def __init__(self, x, y, width, height):
+class Object:
+    """
+    class for object in the game world, like units, enemies or projectiles
+    """
+
+    def __init__(self, x, y, spritenumer):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        # only exsiting values at the moment
+        self.width = 32
+        self.height = 48
         self.health = 1
-        self.img = None
-        #cycle trough diffrent animations
-        self.current_animation = 0
+        self.spritenumber = spritenumer
 
-    #draws moves and updates
-    def update(self,win):
-        
+    # draws moves and updates
+    def update(self, win):
+
         self.current_animation
         self.img = self.imgs[self.current_animation]
         win.blit(self.img, (self.x, self.y))
@@ -23,7 +25,7 @@ imgs = []
 
     def collide(self, X, Y):
         if X <= self.x + self.width and X >= self.x:
-            if Y <= self.y+self.height and Y >= self.y:
+            if Y <= self.y + self.height and Y >= self.y:
                 return True
 
         return false

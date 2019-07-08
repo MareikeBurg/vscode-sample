@@ -27,21 +27,33 @@ class Game:
             self.width, self.height, self.scale = 1280, 720, 2
             logging.warning("using default screen resolution")
 
+        # pygame window
         self.window = pygame.display.set_mode((self.width, self.height))
+        self.window.blit(
+            pygame.image.load(os.path.join("assets/sprites", "background.png")), (0, 0)
+        )
+
+        # map
+        self.feld = Field(self.window, self.scale)
+
+        # entities
         self.enemys = []
         self.neutrals = []
         self.units = []
+
+        # ressources
         self.food: int = 10
-        self.wood: int = 1
+        self.cost: int = 1
+        self.wood: int = 5
         self.stone = 0
-        self.copper = 0
-        self.steel = 0
-        self.mage = 0
-        self.background = pygame.image.load(
-            os.path.join("assets/sprites", "pinkbackground.png")
-        )
-        self.clicks = []
-        self.feld = Field(self.window, self.scale)
+
+        self.textdraw()
+        self.feld.drawall()
+
+        # manual drawings
+        self.feld.draw(500, 500, 41)
+        self.feld.draw(400, 400, 42)
+        self.feld.draw(300, 500, 43)
 
     def run(self):
         run = True
@@ -56,12 +68,26 @@ class Game:
                 pos = pygame.mouse.get_pos()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.clicks.append(pos)
                     print(pos)
 
-            self.draw()
+            pygame.display.update()
 
         pygame.quit()
+
+    def textdraw(self):
+        """
+        draws the ressource bar at the top
+        """
+
+        myfont = pygame.font.SysFont("monospace", 10 * self.scale)
+        text = myfont.render("Food: " + str(self.food), 1, (0, 0, 0))
+        self.window.blit(text, (50, 50))
+        text = myfont.render("- " + str(self.cost), 1, (255, 0, 0))
+        self.window.blit(text, (50 + 75 * self.scale, 50))
+        text = myfont.render("Wood: " + str(self.wood), 1, (0, 0, 0))
+        self.window.blit(text, (50 + 200 * self.scale, 50))
+        text = myfont.render("Stone: " + str(self.stone), 1, (0, 0, 0))
+        self.window.blit(text, (50 + 300 * self.scale, 50))
 
     def clicked(self, pos):
         """
@@ -70,21 +96,4 @@ class Game:
         Arguments:
             pos {(int,int)} -- position in which the click occured
         """
-
-    def draw(self):
-        # self.win.blit(self.background, (0, 0))
-        # for p in self.clicks:
-        # pygame.draw.circle(self.win, (255, 0, 0), (p[0], p[1]), 5, 0)
-
-        self.feld.drawall()
-        # pygame.display.flip()
-        """
-        self.feld.draw(100, 100, "grass")
-        self.feld.draw(100, 100 + 1 * 32, "forest")
-        self.feld.draw(100 + 24, 100 + 16, "water")
-        self.feld.draw(100 + 24, 100 + 16 + 32, "mount")
-        self.feld.draw(200, 200, "mount")
-        self.feld.draw(200, 200 + 1 * 32, "water")
-        """
-        pygame.display.update()
 
