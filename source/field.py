@@ -41,6 +41,18 @@ class Field:
                     self.layout[i][j],
                 )
 
+    def getSpritebyNumber(self, number):
+        """
+        returns a sprite from the tile table
+        
+        Arguments:
+            number {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        return self.tile_list[number]
+
 
 # hardcoded
 """
@@ -61,10 +73,19 @@ def create_tile_list(scale):
     # problem with last row, because only one sprit skip for now
     for x in range(0, int(spritesize[0] / tilesize[0])):
         for y in range(0, int(spritesize[1] / tilesize[1])):
+
             rect = (y * tilesize[1], x * tilesize[0], tilesize[1], tilesize[0])
-            tile = pygame.transform.scale(
-                image.subsurface(rect), (tilesize[1] * scale, tilesize[0] * scale)
-            )
+
+            if x == int(spritesize[0] / tilesize[0] - 1):
+                # increase size from units
+                tile = pygame.transform.scale(
+                    image.subsurface(rect),
+                    (tilesize[1] * scale * scale, tilesize[0] * scale * scale),
+                )
+            else:
+                tile = pygame.transform.scale(
+                    image.subsurface(rect), (tilesize[1] * scale, tilesize[0] * scale)
+                )
             tile_table.append(tile)
     return tile_table
 

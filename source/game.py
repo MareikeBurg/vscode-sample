@@ -1,7 +1,11 @@
 import pygame
 from field import Field
+from unit import Unit
+from enemy import Enemy
+from projectile import Projectile
 import os
 import logging
+from math import sqrt
 
 
 class Game:
@@ -39,28 +43,50 @@ class Game:
         # entities
         self.enemys = []
         self.neutrals = []
-        self.units = []
+        self.projectiles = []
 
         # ressources
         self.food: int = 10
         self.cost: int = 1
         self.wood: int = 5
         self.stone = 0
+        self.year = 0
+        self.day = 0
 
         self.textdraw()
         self.feld.drawall()
 
         # manual drawings
-        self.feld.draw(500, 500, 41)
-        self.feld.draw(400, 400, 42)
-        self.feld.draw(300, 500, 43)
+        # self.feld.draw(500, 500, 41)
+        # self.feld.draw(400, 400, 42)
+        # self.feld.draw(300, 500, 43)
+        self.enemys.append(
+            Enemy(300, 300, self.feld.getSpritebyNumber(42), self.window, 40)
+        )
+        """
+        self.enemys.append(
+            Enemy(300, 380, self.feld.getSpritebyNumber(42), self.window, 30)
+        )"""
+        self.projectiles.append(
+            Projectile(300, 200, self.feld.getSpritebyNumber(43), self.window, 20)
+        )
+        self.projectiles.append(
+            Projectile(300, 100, self.feld.getSpritebyNumber(43), self.window, 20)
+        )
+        """
+        self.enemys.append(
+            Enemy(300, 400, self.feld.getSpritebyNumber(42), self.window,30)
+        )
+        self.enemys.append(
+            Enemy(400, 400, self.feld.getSpritebyNumber(42), self.window)
+        )"""
 
     def run(self):
         run = True
 
         clock = pygame.time.Clock()
         while run:
-            clock.tick(60)
+            clock.tick(10)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
@@ -70,6 +96,29 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     print(pos)
 
+            self.day += 1
+
+            if self.day % 10 == 0:
+                self.textdraw()
+
+            if self.day == 1000:
+                self.year += 1
+                # self.textdraw()
+
+            self.feld.drawall()
+
+            # TODO also update for enemie
+            for enemy in self.enemys:
+                enemy.update()
+                for projectile in self.projectiles:
+                    if detectCircularCollision(enemy, projectile):
+                        if enemy.hit(projectile):
+                            self.enemys.remove(enemy)
+                        self.projectiles.remove(projectile)
+
+            for projectile in self.projectiles:
+                projectile.update()
+
             pygame.display.update()
 
         pygame.quit()
@@ -78,7 +127,9 @@ class Game:
         """
         draws the ressource bar at the top
         """
-
+        self.window.blit(
+            pygame.image.load(os.path.join("assets/sprites", "background.png")), (0, 0)
+        )
         myfont = pygame.font.SysFont("monospace", 10 * self.scale)
         text = myfont.render("Food: " + str(self.food), 1, (0, 0, 0))
         self.window.blit(text, (50, 50))
@@ -88,6 +139,13 @@ class Game:
         self.window.blit(text, (50 + 200 * self.scale, 50))
         text = myfont.render("Stone: " + str(self.stone), 1, (0, 0, 0))
         self.window.blit(text, (50 + 300 * self.scale, 50))
+        text = myfont.render("Year: " + str(self.year), 1, (0, 0, 0))
+        self.window.blit(text, (50 + 400 * self.scale, 50))
+
+        self.window.blit(
+            myfont.render("Day: " + str(self.day), 1, (0, 0, 0)),
+            (50 + 500 * self.scale, 50),
+        )
 
     def clicked(self, pos):
         """
@@ -96,4 +154,37 @@ class Game:
         Arguments:
             pos {(int,int)} -- position in which the click occured
         """
+
+
+def detectCircularCollision(uni1: Unit, uni2: Unit):
+    """
+    checks if the two units are in each others collison range, based on
+    https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+    
+    Arguments:
+        uni1 {Unit} -- first unit, for example an enemey
+        uni2 {Unit} -- second unit, for example an projectile
+    
+    Returns:
+        bool -- true if the units collide, else false
+    """
+
+    # sprites are top left corner centered -> offset
+    dx = uni1.x + uni1.centerxoffset - uni2.x + uni1.centerxoffset
+    dy = uni1.y + uni2.centeryoffset - uni2.y + uni2.centeryoffset
+
+    if sqrt(dx * dx + dy * dy) < uni1.collisonradius + uni2.collisonradius:
+        logging.debug(
+            "collision detected at "
+            + str(uni1.x)
+            + " "
+            + str(uni1.y)
+            + " , "
+            + str(uni1)
+            + " and "
+            + str(uni2)
+        )
+        return True
+
+    return False
 
