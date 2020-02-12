@@ -7,18 +7,11 @@ class Tower(Unit):
     class for towers
     """
 
-    def __init__(self, x, y, sprite, window):
-        self.x = x
-        self.y = y
-        # only exsiting values at the moment
-        self.width = 32
-        self.height = 48
-        self.health = 1
-        self.sprite = sprite
-        self.window = window
+    def __init__(self, x, y, sprite, window, health, collisonradius, scale):
+        Unit.__init__(self, x, y, sprite, window, health, collisonradius, scale)
 
         # new movment algorithm
-        self.last = random.randint(0, 3)
+        # self.last = random.randint(0, 3)
 
     # draws moves and updates
     def update(self):

@@ -8,19 +8,8 @@ class Enemy(Unit):
     class for object in the game world, like units, enemies or projectiles
     """
 
-    def __init__(self, x, y, sprite, window, collisonradius):
-        self.x = x
-        self.y = y
-        # only exsiting values at the moment
-        self.width = 32
-        self.height = 48
-        self.health = 10
-        self.collisonradius = collisonradius
-        self.centerxoffset = 16
-        self.centeryoffset = 16
-
-        self.sprite = sprite
-        self.window = window
+    def __init__(self, x, y, sprite, window, health, collisonradius, scale):
+        Unit.__init__(self, x, y, sprite, window, health, collisonradius, scale)
 
         # new movment algorithm
         self.last = random.randint(0, 3)
@@ -30,6 +19,10 @@ class Enemy(Unit):
         self.window.blit(self.sprite, (self.x, self.y))
         # self.win.blit(self.img, (self.x, self.y))
         # self.moveRandom()
+        # testing hitboxes
+        pygame.draw.circle(
+            self.window, (255, 0, 0), (int(self.x), int(self.y)), self.collisonradius
+        )
 
     """
     def collide(self, X, Y):

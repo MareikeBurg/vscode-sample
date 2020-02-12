@@ -7,19 +7,16 @@ class Unit:
     class for object in the game world, like units, enemies or projectiles
     """
 
-    def __init__(self, x, y, sprite, window):
+    def __init__(self, x, y, sprite, window, health, collisonradius, scale):
         self.x = x
         self.y = y
-        # only exsiting values at the moment
-        self.width = 32
-        self.height = 48
+        self.centerxoffset = 16 * scale
+        self.centeryoffset = 16 * scale
+        self.collisonradius = collisonradius
 
-        self.health = 1
+        self.health = health
         self.sprite = sprite
         self.window = window
-
-        # new movment algorithm
-        self.last = random.randint(0, 3)
 
     # draws moves and updates
     def update(self):
@@ -27,16 +24,10 @@ class Unit:
         # self.win.blit(self.img, (self.x, self.y))
         self.moveRandom()
 
-    def collide(self, X, Y):
-        if X <= self.x + self.width and X >= self.x:
-            if Y <= self.y + self.height and Y >= self.y:
-                return True
-
-        return false
-
     def __str__(self):
         return "at {0} {1}".format(self.x, self.y)
 
+    # shouldn't be here
     def moveRandom(self):
         if random.randint(0, 10) > 9:
             self.last = random.randint(0, 4)

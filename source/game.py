@@ -36,9 +36,11 @@ class Game:
         self.window.blit(
             pygame.image.load(os.path.join("assets/sprites", "background.png")), (0, 0)
         )
+        # sprites
+        self.tile_list = create_sprite_list(self.scale)
 
         # map
-        self.feld = Field(self.window, self.scale)
+        self.feld = Field(self.window, self.scale, self.tile_list)
 
         # entities
         self.enemys = []
@@ -60,19 +62,28 @@ class Game:
         # self.feld.draw(500, 500, 41)
         # self.feld.draw(400, 400, 42)
         # self.feld.draw(300, 500, 43)
-        self.enemys.append(
-            Enemy(300, 300, self.feld.getSpritebyNumber(42), self.window, 40)
-        )
+        self.enemys.append(Enemy(300, 300, self.tile_list[42], self.window, 5, 10, self.scale))
         """
         self.enemys.append(
-            Enemy(300, 380, self.feld.getSpritebyNumber(42), self.window, 30)
+            Enemy(150, 170, self.feld.getSpritebyNumber(42), self.window, 5, 10, self.scale)
         )"""
+
         self.projectiles.append(
-            Projectile(300, 200, self.feld.getSpritebyNumber(43), self.window, 20)
+            Projectile(350, 456, self.tile_list[43], self.window, 1, 10, (300, 300), self.scale)
         )
+        """
         self.projectiles.append(
-            Projectile(300, 100, self.feld.getSpritebyNumber(43), self.window, 20)
-        )
+            Projectile(
+                450,
+                200,
+                self.feld.getSpritebyNumber(43),
+                self.window,
+                1,
+                10,
+                (150, 170),
+                self.scale,
+            )
+        )"""
         """
         self.enemys.append(
             Enemy(300, 400, self.feld.getSpritebyNumber(42), self.window,30)
@@ -143,8 +154,7 @@ class Game:
         self.window.blit(text, (50 + 400 * self.scale, 50))
 
         self.window.blit(
-            myfont.render("Day: " + str(self.day), 1, (0, 0, 0)),
-            (50 + 500 * self.scale, 50),
+            myfont.render("Day: " + str(self.day), 1, (0, 0, 0)), (50 + 500 * self.scale, 50)
         )
 
     def clicked(self, pos):
@@ -170,8 +180,11 @@ def detectCircularCollision(uni1: Unit, uni2: Unit):
     """
 
     # sprites are top left corner centered -> offset
-    dx = uni1.x + uni1.centerxoffset - uni2.x + uni1.centerxoffset
-    dy = uni1.y + uni2.centeryoffset - uni2.y + uni2.centeryoffset
+    dx = uni1.x + uni1.centerxoffset - uni2.x + uni2.centerxoffset
+    dy = uni1.y + uni1.centeryoffset - uni2.y + uni2.centeryoffset
+    print("uni1: ", uni1.x, uni1.y)
+    print("uni2: ", uni2.x, uni2.y)
+    print(sqrt(dx * dx + dy * dy), uni1.collisonradius + uni2.collisonradius)
 
     if sqrt(dx * dx + dy * dy) < uni1.collisonradius + uni2.collisonradius:
         logging.debug(
@@ -188,3 +201,28 @@ def detectCircularCollision(uni1: Unit, uni2: Unit):
 
     return False
 
+
+# hardcoded
+def create_sprite_list(scale):
+    """
+    one tile is 48 pixel high and 32 pixels wide, the spriteset is 6 tiles high and 8 tiles wides. 
+    Height total 48*6=288, width total 32*8=256
+
+    returns a list of all sprites
+    """
+    tilesize = (48, 32)
+    spritesize = (288, 256)
+    spritelocation = "assets/sprites/fantasyhextiles_v3.png"
+
+    image = pygame.image.load(spritelocation).convert_alpha()
+    tile_table = []
+    for x in range(0, int(spritesize[0] / tilesize[0])):
+        for y in range(0, int(spritesize[1] / tilesize[1])):
+
+            rect = (y * tilesize[1], x * tilesize[0], tilesize[1], tilesize[0])
+
+            tile = pygame.transform.scale(
+                image.subsurface(rect), (tilesize[1] * scale, tilesize[0] * scale)
+            )
+            tile_table.append(tile)
+    return tile_table
